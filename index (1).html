@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRH — Révision Express | Youness Alilou</title>
+  <style>
+    :root {
+      --bg: #0d1526;
+      --card: #16213e;
+      --card2: #1a2a4a;
+      --accent: #4f9eff;
+      --green: #22d3a4;
+      --yellow: #f5c842;
+      --red: #f87171;
+      --purple: #a78bfa;
+      --orange: #fb923c;
+      --pink: #f472b6;
+      --teal: #2dd4bf;
+      --text: #e2e8f0;
+      --muted: #7d90b0;
+      --border: #1e3055;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 20px 16px 60px;
+    }
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      padding: 24px 0 20px;
+    }
+    .header .badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .header h1 {
+      font-size: clamp(22px, 5vw, 32px);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+    .header .sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .header .author {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 14px;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 20px 0 28px;
+    }
+    .tab-btn {
+      padding: 10px 30px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s;
+      background: var(--card);
+      color: var(--muted);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent), #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 20px #4f9eff44;
+    }
+    /* ── PANELS ── */
+    .panel { display: none; max-width: 700px; margin: 0 auto; }
+    .panel.active { display: block; }
+    /* ── ACCORDION ── */
+    .acc-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .acc-item.open { border-color: var(--acc-color, var(--accent)); }
+    .acc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .acc-left { display: flex; align-items: center; gap: 10px; }
+    .acc-icon { font-size: 20px; }
+    .acc-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+    .acc-item.open .acc-title { color: var(--acc-color, var(--accent)); }
+    .acc-arrow {
+      font-size: 18px;
+      color: var(--acc-color, var(--accent));
+      transition: transform 0.25s;
+      display: inline-block;
+    }
+    .acc-item.open .acc-arrow { transform: rotate(180deg); }
+    .acc-body {
+      display: none;
+      padding: 4px 18px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .acc-item.open .acc-body { display: block; }
+    .acc-point {
+      padding: 10px 14px;
+      margin: 6px 0;
+      background: var(--card2);
+      border-radius: 10px;
+      border-left: 3px solid var(--acc-color, var(--accent));
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    /* ── QCM ── */
+    .qcm-wrap { max-width: 600px; margin: 0 auto; }
+    .progress-bar-bg {
+      height: 6px;
+      background: var(--card);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      border-radius: 3px;
+      transition: width 0.4s;
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .q-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+    .q-label {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .q-text { font-size: 16px; font-weight: 600; line-height: 1.55; }
+    .opt {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 16px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.15s;
+      display: block;
+      width: 100%;
+      text-align: left;
+      color: var(--text);
+    }
+    .opt:hover:not(:disabled) { border-color: var(--accent); background: var(--card2); }
+    .opt:disabled { cursor: default; }
+    .opt.correct { background: #052e16; border-color: var(--green); }
+    .opt.wrong { background: #2d1515; border-color: var(--red); }
+    .opt .letter { font-weight: 700; color: var(--accent); margin-right: 8px; }
+    .explication {
+      background: #0d2137;
+      border: 1px solid #4f9eff44;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 13.5px;
+      line-height: 1.6;
+      display: none;
+    }
+    .explication.show { display: block; }
+    .explication strong { color: var(--accent); }
+    .next-btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #2563eb);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      display: none;
+    }
+    /* ── RESULTS ── */
+    .results { text-align: center; display: none; }
+    .results .trophy { font-size: 64px; margin-bottom: 16px; }
+    .results .score-big { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+    .results .score-msg { font-size: 16px; color: var(--muted); margin-bottom: 24px; }
+    .results .res-bar-bg { height: 14px; background: var(--card); border-radius: 8px; overflow: hidden; margin-bottom: 28px; }
+    .results .res-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--accent)); border-radius: 8px; transition: width 1s ease; }
+    .results .btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 12px 28px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #2563eb);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-secondary {
+      padding: 12px 28px;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    /* ── HINT ── */
+    .hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="badge">Gestion des Ressources Humaines · S4</div>
+    <h1>📖 Révision Express GRH</h1>
+    <div class="sub">Examen : 12 juin 2026 · FSJES Meknès</div>
+    <div class="author">✍️ Youness Alilou</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('resume')">📋 Résumé</button>
+    <button class="tab-btn" onclick="switchTab('qcm')">🎯 QCM Quiz</button>
+  </div>
+
+  <!-- RESUME PANEL -->
+  <div class="panel active" id="panel-resume">
+
+    <div id="accordion"></div>
+    <p class="hint">💡 Clique sur une section pour la développer</p>
+
+  </div>
+
+  <!-- QCM PANEL -->
+  <div class="panel" id="panel-qcm">
+    <div class="qcm-wrap">
+
+      <div id="quiz-area">
+        <div class="progress-info">
+          <span id="q-counter">Question 1 / 20</span>
+          <span id="q-score">Score : 0 ✅</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+
+        <div class="q-card" id="q-card">
+          <div class="q-label" id="q-label">QCM #1</div>
+          <div class="q-text" id="q-text"></div>
+        </div>
+
+        <div id="options-list"></div>
+
+        <div class="explication" id="explication">
+          <strong>💡 Explication : </strong><span id="explication-text"></span>
+        </div>
+
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Question suivante →</button>
+      </div>
+
+      <div class="results" id="results">
+        <div class="trophy" id="trophy">🏆</div>
+        <div class="score-big" id="score-big"></div>
+        <div class="score-msg" id="score-msg"></div>
+        <div class="res-bar-bg">
+          <div class="res-bar-fill" id="res-bar" style="width:0%"></div>
+        </div>
+        <div class="btns">
+          <button class="btn-primary" onclick="resetQuiz()">🔄 Recommencer</button>
+          <button class="btn-secondary" onclick="switchTab('resume')">📋 Réviser</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Made by <a href="https://un2es.github.io/Youness-Alilou/" target="_blank">Youness Alilou</a> · FSJES Meknès 2025/2026
+  </div>
+
+<script>
+// ════════════════════════════════
+//  DATA
+// ════════════════════════════════
+
+const sections = [
+  {
+    icon: "🏗️", title: "Processus RH — 4 Catégories", color: "#4f9eff",
+    points: [
+      "📌 <b>Planification des RH</b> : analyse emplois & qualifications, analyse environnement interne/externe, détermination des besoins en effectifs, élaboration des politiques RH",
+      "📌 <b>Acquisition des RH</b> : décrire les qualifications requises → recrutement & sélection → accueil & intégration",
+      "📌 <b>Développement des RH</b> : évaluation de la performance & du potentiel + déterminer les besoins en formation + actions de formation",
+      "📌 <b>Conservation des RH</b> : motivation financière (rémunération) ET non financière (conditions de travail…)",
+    ]
+  },
+  {
+    icon: "🔍", title: "Recrutement", color: "#22d3a4",
+    points: [
+      "💡 <b>Compétences</b> : Savoir = connaissance | Savoir-faire = Hard skills (technique) | Savoir-être = Soft skills (personnalité)",
+      "📄 <b>CDI</b> (sans limite de durée) | <b>CDD</b> (tâche précise & temporaire) | <b>CTT</b> : ETT → contrat de mise à disposition (ETT↔entreprise) + contrat de mission (ETT↔salarié intérimaire)",
+      "🏢 <b>Acteurs</b> : Entreprise elle-même (postes répétitifs, candidatures spontanées) | Cabinet (profils méconnus) | Chasseur de têtes (postes stratégiques) | ANAPEC (cadres)",
+      "🌐 <b>Canaux</b> : Interne (promotion, motivation, 0 coût, mais routine/jalousie) | Externe : informel = cooptation | formel = annonces, ANAPEC",
+    ]
+  },
+  {
+    icon: "📚", title: "Formation & Développement", color: "#f5c842",
+    points: [
+      "🎯 <b>Types</b> : Adaptation (nouveau poste) | Perfectionnement (améliorer les existants) | Prospective (préparer l'avenir)",
+      "⚙️ <b>Ingénierie en 4 étapes</b> : ① Analyser les besoins (organisationnels, liés à l'emploi, individuels) → ② Contexte & stratégie globale → ③ Choisir les méthodes → ④ Évaluer & suivre",
+      "📊 <b>Évaluation</b> : <b>Ante</b> = avant la formation (identifier besoins) | <b>À chaud</b> = juste après (satisfaction & acquis) | <b>À froid</b> = quelques mois après (transfert + résultats)",
+      "🔗 <b>Transfert</b> = appliquer ou enseigner ce qu'on a appris | <b>Résultat</b> = atteinte des objectifs fixés avant la formation",
+    ]
+  },
+  {
+    icon: "🚀", title: "Gestion des Carrières", color: "#a78bfa",
+    points: [
+      "📈 <b>Typologies</b> : Traditionnelle (progression dans 1 seule org.) | Protéenne (gérée par l'individu, accomplissement de soi) | Nomade (mobilité inter-organisations & géographique)",
+      "🔄 <b>Mobilité</b> : Verticale = promotion hiérarchique | Latérale = autre fonction, même niveau | Horizontale = même fonction, autre poste",
+      "📅 <b>Stades Hall 1976</b> : Exploration (5-25 ans) → Établissement & avancement (26-40 ans) → Stabilisation : croissance/maintien/stagnation (41-65 ans) → Retraite (65+)",
+      "🛠️ <b>Outils</b> : Entretien annuel (savoir/savoir-faire/savoir-être, obligation salarié) | Bilan de compétences (→ projet professionnel) | Assessment centers (simulations) | Évaluation 360° (multi-sources)",
+    ]
+  },
+  {
+    icon: "💰", title: "Rémunération", color: "#fb923c",
+    points: [
+      "💵 <b>Directe</b> (sur bulletin de paie) : salaire de base + heures sup + primes fixes + gratifications + avantages en nature",
+      "🏥 <b>Indirecte</b> (hors fiche de paie) : cotisations CNSS / AMO / CIMR + assurance complémentaire (maladie, invalidité)",
+      "🌟 <b>Non financière</b> : reconnaissance, conditions de travail, horaires flexibles, télétravail, formation & coaching",
+      "📊 <b>Masse salariale</b> = rémunérations <u>BRUTES</u>. Elle varie selon : effectifs + évolution des structures + mesures générales (SMIG) + mesures individuelles (augmentations personnelles)",
+    ]
+  },
+  {
+    icon: "⏰", title: "Gestion du Temps — Matrice Covey", color: "#f472b6",
+    points: [
+      "🔴 <b>Q1 Urgent + Important</b> → GÉRER : crises, licenciement abusif, urgences médicales",
+      "🟢 <b>Q2 Non urgent + Important</b> → ⭐ LE PLUS IMPORTANT : planification, formation, prévention, construction de relations",
+      "🟡 <b>Q3 Urgent + Pas important</b> → DÉLÉGUER : interruptions, certains emails, demandes répétitives",
+      "⚫ <b>Q4 Ni urgent ni important</b> → ÉLIMINER : newsletters inutiles, réunions sans valeur, distractions",
+      "⚖️ <b>Durée légale Maroc</b> : 44h/sem (non agricole = 2288h/an) | Trajet domicile/travail + pause + restauration ≠ travail effectif",
+    ]
+  },
+  {
+    icon: "🛡️", title: "Santé & Sécurité — 9 Principes", color: "#2dd4bf",
+    points: [
+      "1️⃣ <b>Éviter les risques</b> (supprimer machine inutile) | 2️⃣ <b>Évaluer</b> les risques inévitables | 3️⃣ <b>Combattre à la source</b> (ventilation locale)",
+      "4️⃣ <b>Adapter le travail à l'homme</b> (hauteur plans de travail) | 5️⃣ <b>Tenir compte de l'évolution technique</b> (remplacer équipements obsolètes)",
+      "6️⃣ <b>Remplacer le dangereux</b> par moins dangereux (peinture à eau < solvants) | 7️⃣ <b>Planifier la prévention</b> (intégrer sécurité dès la conception)",
+      "8️⃣ <b>Privilégier protection COLLECTIVE</b> > individuelle | 9️⃣ <b>Donner instructions appropriées</b> (former les nouveaux)",
+      "🚑 <b>Accident de travail</b> = événement SOUDAIN | <b>Maladie professionnelle</b> = exposition PROLONGÉE (agents physiques, chimiques, biologiques)",
+    ]
+  },
+  {
+    icon: "⚡", title: "Gestion des Conflits", color: "#f87171",
+    points: [
+      "📋 <b>Types</b> : pouvoir | besoins | valeurs | ressources | tâche | procédé | instrumental (outils/structures) | socio-émotif (émotions) | relations",
+      "🔓 <b>Ouvert</b> = visible, exprimé clairement | 🔒 <b>Latent</b> = silence, signes indirects (absentéisme, stress, erreurs, baisse motivation)",
+      "✅ <b>Constructif</b> = dialogue respectueux, recherche de solutions | ❌ <b>Destructif</b> = tensions durables, compétition excessive, ruptures",
+      "🎯 <b>Gestion situationnelle</b> : Résultat↑ + Relation↓ → <b>Imposition</b> | R↑ + Rel↑ → <b>Collaboration</b> | R↓ + Rel↓ → <b>Évitement</b> | R↓ + Rel↑ → <b>Accommodation</b> | R~ + Rel~ → <b>Compromis</b>",
+      "⚖️ <b>Résolution</b> : Hiérarchie (rapide, risque conflit latent) | Arbitrage (tiers décide) | Médiation (tiers facilite) | Négociation (compromis g/g ou g/p)",
+    ]
+  },
+];
+
+const qcms = [
+  { q: "Le processus RH est constitué de 4 catégories. Laquelle N'en fait PAS partie ?", opts: ["La planification des RH", "L'organisation des RH", "La conservation des RH", "L'acquisition des RH"], a: 1, exp: "Les 4 catégories sont : Planification, Acquisition, Développement et Conservation. 'L'organisation' n'en fait pas partie." },
+  { q: "Les Soft skills relèvent davantage de :", opts: ["La personnalité et du savoir-faire", "La personnalité et du savoir-être", "Des connaissances et du savoir-faire", "Des compétences techniques"], a: 1, exp: "Les Soft skills = compétences comportementales liées à la personnalité et au savoir-être : communication, gestion du stress, leadership..." },
+  { q: "Dans le CTT, le contrat de MISSION est conclu entre :", opts: ["L'ETT et le salarié intérimaire", "L'ETT et l'entreprise utilisatrice", "L'entreprise utilisatrice et le salarié", "Le salarié et l'ANAPEC"], a: 0, exp: "Le CTT nécessite 2 contrats : (1) ETT ↔ Entreprise utilisatrice = mise à disposition | (2) ETT ↔ Salarié intérimaire = contrat de mission." },
+  { q: "La masse salariale concerne principalement :", opts: ["Les rémunérations nettes", "Les rémunérations brutes", "Les dividendes", "Les charges fiscales"], a: 1, exp: "La masse salariale = rémunérations BRUTES versées par l'entreprise à ses salariés sur une période donnée (mensuelle ou annuelle)." },
+  { q: "La rémunération financière directe figure :", opts: ["Dans le bilan comptable", "Sur le bulletin de paie", "Dans les statuts de l'entreprise", "Dans les contrats fournisseurs"], a: 1, exp: "La rémunération directe (salaire de base, primes, gratifications, avantages en nature) figure sur le BULLETIN DE PAIE." },
+  { q: "Quelle stratégie de gestion des conflits risque d'aggraver les tensions à long terme ?", opts: ["Collaboration", "Compromis", "Évitement", "Accommodation"], a: 2, exp: "L'ÉVITEMENT = ignorer le conflit. Il peut paraître pratique à court terme, mais s'il n'est pas résolu, le conflit s'aggrave avec le temps." },
+  { q: "Une équipe a des retards et une baisse de motivation, mais personne n'exprime son mécontentement. C'est :", opts: ["Un conflit constructif", "Un conflit ouvert", "Un conflit latent", "Un conflit de tâche"], a: 2, exp: "Le conflit LATENT se manifeste indirectement : absentéisme, stress, erreurs, baisse de motivation... sans expression directe du désaccord." },
+  { q: "Résultat très important + Relation très importante → Quelle stratégie ?", opts: ["Évitement", "Collaboration", "Imposition", "Accommodation"], a: 1, exp: "Quand les deux dimensions sont très importantes, la COLLABORATION (gagnant/gagnant) est la stratégie recommandée : elle protège à la fois le résultat ET la relation." },
+  { q: "Un manager passe ses journées à gérer des urgences car il n'a jamais planifié. Selon Covey :", opts: ["Bonne maîtrise du Q1", "Dépendance excessive au Q1 par négligence du Q2", "Mauvaise gestion du Q4", "Application efficace de la planification"], a: 1, exp: "Covey : négliger le Q2 (planification, prévention) génère une surcharge permanente de crises (Q1). Il faut concentrer son énergie sur le Q2." },
+  { q: "Pourquoi le Quadrant 2 est-il le plus important selon Covey ?", opts: ["Il traite les urgences immédiates", "Il réduit uniquement les coûts", "Il favorise la prévention, la croissance durable et la réduction du stress", "Il élimine totalement les conflits"], a: 2, exp: "Le Q2 = Non urgent mais Important. Se concentrer dessus permet de PRÉVENIR les crises (Q1), réduire le stress et assurer une croissance durable." },
+  { q: "Le temps de trajet domicile → lieu de travail est :", opts: ["Du travail effectif rémunéré", "Une période d'astreinte", "Une durée légale de travail", "Un temps non considéré comme travail effectif"], a: 3, exp: "N'est PAS considéré comme travail effectif : le trajet domicile/travail, les pauses, le temps de restauration et les astreintes." },
+  { q: "L'entretien annuel d'évaluation : pour le salarié, c'est :", opts: ["Un droit qu'il peut refuser", "Une obligation (il ne peut pas refuser)", "Facultatif pour les non-cadres", "Une sanction disciplinaire"], a: 1, exp: "L'entretien annuel est un DROIT pour l'employeur et une OBLIGATION pour le salarié. Il ne peut pas refuser l'entretien programmé." },
+  { q: "Karim change de service tout en gardant le même niveau hiérarchique. C'est :", opts: ["Mobilité verticale", "Mobilité latérale", "Mobilité externe", "Carrière protéenne"], a: 1, exp: "Mobilité LATÉRALE = changer de fonction ou de domaine en restant au même niveau hiérarchique. Objectif : élargir les compétences." },
+  { q: "Yassine, 18 ans dans la même entreprise, passé d'assistant RH à Directeur RH. C'est :", opts: ["Carrière nomade", "Carrière protéenne", "Carrière traditionnelle", "Mobilité horizontale"], a: 2, exp: "Carrière TRADITIONNELLE = progression hiérarchique dans UNE SEULE organisation sur le long terme." },
+  { q: "Une évaluation faite immédiatement à la fin d'une formation s'appelle :", opts: ["Évaluation ante", "Évaluation à chaud", "Évaluation à froid", "Évaluation 360°"], a: 1, exp: "À CHAUD = juste après la formation (satisfaction et acquis) | À FROID = quelques mois après (transfert et résultats) | Ante = avant la formation." },
+  { q: "Une machine dangereuse remplacée par un équipement moderne sécurisé. C'est le principe :", opts: ["Donner les instructions appropriées", "Tenir compte de l'évolution de la technique", "Adapter le travail à l'homme", "Évaluer les risques"], a: 1, exp: "Principe n°5 : TENIR COMPTE DE L'ÉVOLUTION DE LA TECHNIQUE = remplacer les équipements obsolètes par des machines modernes plus sécurisées." },
+  { q: "Peinture aux solvants remplacée par peinture à base d'eau. C'est :", opts: ["Évaluer les risques", "Remplacer le dangereux par ce qui l'est moins", "Planifier la prévention", "Éviter les risques"], a: 1, exp: "Principe n°6 : REMPLACER LE DANGEREUX par ce qui l'est moins. Exemple typique : peinture à eau à la place de solvants toxiques." },
+  { q: "L'augmentation du SMIG est considérée comme :", opts: ["Mesure individuelle", "Mesure générale", "Évolution des effectifs", "Évolution des structures"], a: 1, exp: "Les mesures GÉNÉRALES = augmentations collectives qui s'appliquent à tout ou partie des salariés (ex : revalorisation du SMIG par l'État)." },
+  { q: "Le bilan de compétences vise principalement à :", opts: ["Déterminer le salaire futur", "Définir un projet professionnel", "Évaluer la rentabilité de l'entreprise", "Organiser une mobilité verticale"], a: 1, exp: "Le bilan de compétences permet d'analyser ses compétences, aptitudes et motivations pour DÉFINIR UN PROJET PROFESSIONNEL réaliste." },
+  { q: "La collaboration est la stratégie la plus efficace car :", opts: ["Elle évite tout dialogue", "Elle favorise uniquement le résultat", "Elle protège à la fois la relation ET le résultat", "Elle impose une solution rapide"], a: 2, exp: "La COLLABORATION = stratégie gagnant/gagnant. Elle satisfait les besoins des deux parties : à la fois le résultat ET la relation. La plus durable." },
+];
+
+// ════════════════════════════════
+//  ACCORDION BUILD
+// ════════════════════════════════
+
+const accEl = document.getElementById('accordion');
+sections.forEach((s, i) => {
+  const item = document.createElement('div');
+  item.className = 'acc-item';
+  item.style.setProperty('--acc-color', s.color);
+  item.innerHTML = `
+    <div class="acc-header" onclick="toggleAcc(${i})">
+      <div class="acc-left">
+        <span class="acc-icon">${s.icon}</span>
+        <span class="acc-title">${s.title}</span>
+      </div>
+      <span class="acc-arrow">▾</span>
+    </div>
+    <div class="acc-body">
+      ${s.points.map(p => `<div class="acc-point">${p}</div>`).join('')}
+    </div>`;
+  accEl.appendChild(item);
+});
+
+function toggleAcc(i) {
+  const items = document.querySelectorAll('.acc-item');
+  items[i].classList.toggle('open');
+}
+
+// ════════════════════════════════
+//  TABS
+// ════════════════════════════════
+
+function switchTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.getAttribute('onclick').includes(name)) b.classList.add('active');
+  });
+}
+
+// ════════════════════════════════
+//  QCM ENGINE
+// ════════════════════════════════
+
+let qi = 0, score = 0, answered = false;
+
+function loadQuestion() {
+  const q = qcms[qi];
+  document.getElementById('q-label').textContent = `QCM #${qi + 1}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-counter').textContent = `Question ${qi + 1} / ${qcms.length}`;
+  document.getElementById('q-score').textContent = `Score : ${score} ✅`;
+  document.getElementById('progress-fill').style.width = `${(qi / qcms.length) * 100}%`;
+  document.getElementById('explication').classList.remove('show');
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="letter">${letters[i]}.</span>${opt}`;
+    btn.onclick = () => selectOpt(i);
+    list.appendChild(btn);
+  });
+}
+
+function selectOpt(i) {
+  if (answered) return;
+  answered = true;
+  const q = qcms[qi];
+  const btns = document.querySelectorAll('.opt');
+  btns.forEach(b => b.disabled = true);
+  btns[q.a].classList.add('correct');
+  if (i === q.a) {
+    score++;
+    btns[i].innerHTML = '✅ ' + btns[i].innerHTML;
+  } else {
+    btns[i].classList.add('wrong');
+    btns[i].innerHTML = '❌ ' + btns[i].innerHTML;
+  }
+  document.getElementById('explication-text').textContent = q.exp;
+  document.getElementById('explication').classList.add('show');
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = qi + 1 >= qcms.length ? 'Voir mes résultats →' : 'Question suivante →';
+}
+
+function nextQuestion() {
+  qi++;
+  if (qi >= qcms.length) {
+    showResults();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  const pct = Math.round((score / qcms.length) * 100);
+  const trophies = pct >= 85 ? '🏆' : pct >= 70 ? '🌟' : pct >= 50 ? '💪' : '📚';
+  document.getElementById('trophy').textContent = trophies;
+  document.getElementById('score-big').textContent = `${score} / ${qcms.length} — ${pct}%`;
+  const msgs = ['Révise encore le résumé, tu peux le faire !', 'Pas mal ! Continue à réviser 📖', 'Bien ! Encore un peu d\'effort 💪', 'Très bien ! Tu maîtrises bien 👍', 'Excellent ! Tu es prêt pour l\'exam 🎉'];
+  document.getElementById('score-msg').textContent = msgs[Math.min(4, Math.floor(pct / 20))];
+  setTimeout(() => { document.getElementById('res-bar').style.width = pct + '%'; }, 100);
+}
+
+function resetQuiz() {
+  qi = 0; score = 0; answered = false;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  loadQuestion();
+}
+
+// INIT
+loadQuestion();
+</script>
+</body>
+</html>
